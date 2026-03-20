@@ -2,8 +2,8 @@ use std::io::Write;
 
 use ray_tracer::color::{ColorRGB, write_color};
 
-const IMAGE_HEIGHT: i32 = 256;
-const IMAGE_WIDTH: i32 = 256;
+const IMAGE_HEIGHT: i16 = 256;
+const IMAGE_WIDTH: i16 = 256;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     write!(
@@ -18,7 +18,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             let pixel_color = ColorRGB::new(
                 i as f64 / (IMAGE_WIDTH - 1) as f64,
                 j as f64 / (IMAGE_HEIGHT - 1) as f64,
-                0.,
+                0.6,
             );
 
             write_color(&mut std::io::stdout(), pixel_color)?;
