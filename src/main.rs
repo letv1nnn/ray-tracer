@@ -21,8 +21,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 0.,
             );
 
-            let mut out = std::io::stdout();
-            write_color(&mut out, pixel_color)?;
+            write_color(&mut std::io::stdout(), pixel_color)?;
         }
     }
 

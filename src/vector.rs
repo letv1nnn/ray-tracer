@@ -53,16 +53,6 @@ pub mod vector {
         pub fn z(&self) -> f64 {
             self.2
         }
-        // color getters
-        pub fn red(&self) -> f64 {
-            self.0
-        }
-        pub fn green(&self) -> f64 {
-            self.1
-        }
-        pub fn blue(&self) -> f64 {
-            self.2
-        }
     }
 
     // comparison operation, Partial, becuase of the floats' behaviour

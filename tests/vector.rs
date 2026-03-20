@@ -1,7 +1,7 @@
 use ray_tracer::vector::vector::Vec3;
 
 #[test]
-fn test_creation_and_getters() {
+fn creation_and_getters_of_a_vector() {
     let v = Vec3::new(1.0, 2.0, 3.0);
     assert!((v.x() - 1.0).abs() < 1e-8);
     assert!((v.y() - 2.0).abs() < 1e-8);
@@ -13,14 +13,14 @@ fn test_creation_and_getters() {
 }
 
 #[test]
-fn test_equality() {
+fn vectors_equality() {
     let a = Vec3::new(1.000000001, 2.0, 3.0);
     let b = Vec3::new(1.0, 2.0, 3.0);
     assert_eq!(a, b);
 }
 
 #[test]
-fn test_add_sub() {
+fn adding_and_subtracting_vectors() {
     let a = Vec3::new(1.0, 2.0, 3.0);
     let b = Vec3::new(4.0, 5.0, 6.0);
     assert_eq!(a + b, Vec3::new(5.0, 7.0, 9.0));
@@ -37,7 +37,7 @@ fn test_add_sub() {
 }
 
 #[test]
-fn test_mul_div_scalar() {
+fn vector_scaling() {
     let v = Vec3::new(1.0, -2.0, 3.0);
     assert_eq!(v * 2.0, Vec3::new(2.0, -4.0, 6.0));
     assert_eq!(2.0 * v, Vec3::new(2.0, -4.0, 6.0));
@@ -54,7 +54,7 @@ fn test_mul_div_scalar() {
 }
 
 #[test]
-fn test_length_and_unit() {
+fn vectors_length_and_unit() {
     let v = Vec3::new(3.0, 4.0, 0.0);
     assert!((v.length() - 5.0).abs() < 1e-8);
     assert!((v.length_squared() - 25.0).abs() < 1e-8);
@@ -70,7 +70,7 @@ fn test_length_and_unit() {
 }
 
 #[test]
-fn test_dot_cross() {
+fn dot_cross_products_of_vectors() {
     let a = Vec3::new(1.0, 0.0, 0.0);
     let b = Vec3::new(0.0, 1.0, 0.0);
     assert!((a.dot(b) - 0.0).abs() < 1e-8);
@@ -80,15 +80,17 @@ fn test_dot_cross() {
 }
 
 #[test]
-fn test_from_array() {
-    let arr = [1.0, 2.0, 3.0];
-    let v: Vec3 = arr.into();
-    assert_eq!(v, Vec3::new(1.0, 2.0, 3.0));
-}
-
-#[test]
-fn test_display() {
+fn displaying_vector() {
     let v = Vec3::new(1.0, 2.0, 3.0);
     let s = format!("{}", v);
     assert_eq!(s, "vec3<1, 2, 3>");
+}
+
+#[test]
+fn from_into_vector_convertions() {
+    let point = [1., 2., 3.];
+    let vec: Vec3 = point.into();
+
+    assert_eq!(vec, Vec3::new(1., 2., 3.));
+    assert_eq!(vec, Vec3::from([1., 2., 3.]));
 }
