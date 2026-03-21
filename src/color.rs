@@ -4,7 +4,7 @@ use crate::vector::vector::Vec3;
 
 pub type ColorRGB = Vec3;
 
-pub fn write_color(out: &mut impl Write, pixel_color: ColorRGB) -> std::io::Result<()> {
+pub fn write_color(out: &mut impl Write, pixel_color: &ColorRGB) -> std::io::Result<()> {
     let (r, g, b) = (pixel_color.x(), pixel_color.y(), pixel_color.z());
 
     // translating the [0, 1] component values to the byte range [0, 255].

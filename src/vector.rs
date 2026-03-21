@@ -8,8 +8,8 @@ pub mod vector {
     pub struct Vec3(f64, f64, f64);
 
     impl Vec3 {
-        pub fn new(a: f64, b: f64, c: f64) -> Self {
-            Self(a, b, c)
+        pub fn new(x: f64, y: f64, z: f64) -> Self {
+            Self(x, y, z)
         }
 
         // length of the vector
@@ -43,7 +43,7 @@ pub mod vector {
             )
         }
 
-        // point getters
+        // getters
         pub fn x(&self) -> f64 {
             self.0
         }
