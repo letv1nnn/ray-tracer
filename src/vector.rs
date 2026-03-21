@@ -1,9 +1,10 @@
 pub mod vector {
     use std::{
         fmt::Display,
-        ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign},
+        ops::{Add, AddAssign, Div, DivAssign, Index, Mul, MulAssign, Neg, Sub, SubAssign},
     };
 
+    #[repr(C)]
     #[derive(Debug, Copy, Clone)]
     pub struct Vec3(f64, f64, f64);
 
@@ -11,6 +12,10 @@ pub mod vector {
         pub fn new(x: f64, y: f64, z: f64) -> Self {
             Self(x, y, z)
         }
+
+        // consts
+        pub const ZERO: Self = Self(0., 0., 0.);
+        pub const ONE: Self = Self(1., 1., 1.);
 
         // length of the vector
         pub fn length(&self) -> f64 {
@@ -21,21 +26,17 @@ pub mod vector {
         }
 
         // unit vector from original
-        pub fn unit(&self) -> Self {
+        pub fn try_unit(&self) -> Option<Self> {
             let len = self.length();
-            if len == 0. {
-                *self
-            } else {
-                Self(self.0 / len, self.1 / len, self.2 / len)
-            }
+            if len == 0. { None } else { Some(*self / len) }
         }
 
         // dot product
-        pub fn dot(&self, rhs: Self) -> f64 {
+        pub fn dot(&self, rhs: &Self) -> f64 {
             self.0 * rhs.0 + self.1 * rhs.1 + self.2 * rhs.2
         }
         // cross product
-        pub fn cross(&self, rhs: Self) -> Self {
+        pub fn cross(&self, rhs: &Self) -> Self {
             Self::new(
                 self.1 * rhs.2 - self.2 * rhs.1,
                 self.2 * rhs.0 - self.0 * rhs.2,
@@ -56,6 +57,7 @@ pub mod vector {
     }
 
     // comparison operation, Partial, becuase of the floats' behaviour
+    // issue with transitivity. can break some std::cpllections
     impl PartialEq for Vec3 {
         fn eq(&self, other: &Self) -> bool {
             (self.0 - other.0).abs() < 1e-8
@@ -139,6 +141,19 @@ pub mod vector {
             self.0 /= rhs;
             self.1 /= rhs;
             self.2 /= rhs;
+        }
+    }
+
+    impl Index<usize> for Vec3 {
+        type Output = f64;
+
+        fn index(&self, index: usize) -> &Self::Output {
+            match index {
+                0 => &self.0,
+                1 => &self.1,
+                2 => &self.2,
+                _ => panic!("index out of range!"),
+            }
         }
     }
 

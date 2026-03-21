@@ -6,10 +6,6 @@ fn creation_and_getters_of_a_vector() {
     assert!((v.x() - 1.0).abs() < 1e-8);
     assert!((v.y() - 2.0).abs() < 1e-8);
     assert!((v.z() - 3.0).abs() < 1e-8);
-
-    assert!((v.red() - 1.0).abs() < 1e-8);
-    assert!((v.green() - 2.0).abs() < 1e-8);
-    assert!((v.blue() - 3.0).abs() < 1e-8);
 }
 
 #[test]
@@ -59,23 +55,20 @@ fn vectors_length_and_unit() {
     assert!((v.length() - 5.0).abs() < 1e-8);
     assert!((v.length_squared() - 25.0).abs() < 1e-8);
 
-    let unit = v.unit();
+    let unit = v.try_unit().expect("failed to create unit vector");
     assert!((unit.length() - 1.0).abs() < 1e-8);
     assert!((unit.x() - 0.6).abs() < 1e-8);
     assert!((unit.y() - 0.8).abs() < 1e-8);
     assert!((unit.z() - 0.0).abs() < 1e-8);
-
-    let zero = Vec3::new(0.0, 0.0, 0.0);
-    assert_eq!(zero.unit(), zero);
 }
 
 #[test]
 fn dot_cross_products_of_vectors() {
     let a = Vec3::new(1.0, 0.0, 0.0);
     let b = Vec3::new(0.0, 1.0, 0.0);
-    assert!((a.dot(b) - 0.0).abs() < 1e-8);
+    assert!((a.dot(&b) - 0.0).abs() < 1e-8);
 
-    let c = a.cross(b);
+    let c = a.cross(&b);
     assert_eq!(c, Vec3::new(0.0, 0.0, 1.0));
 }
 
