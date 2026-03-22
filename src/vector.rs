@@ -18,24 +18,29 @@ pub mod vector {
         pub const ONE: Self = Self(1., 1., 1.);
 
         // length of the vector
+        #[inline]
         pub fn length(&self) -> f64 {
             self.length_squared().sqrt()
         }
+        #[inline]
         pub fn length_squared(&self) -> f64 {
             self.0 * self.0 + self.1 * self.1 + self.2 * self.2
         }
 
         // unit vector from original
+        #[inline]
         pub fn try_unit(&self) -> Option<Self> {
             let len = self.length();
             if len == 0. { None } else { Some(*self / len) }
         }
 
         // dot product
+        #[inline]
         pub fn dot(&self, rhs: &Self) -> f64 {
             self.0 * rhs.0 + self.1 * rhs.1 + self.2 * rhs.2
         }
         // cross product
+        #[inline]
         pub fn cross(&self, rhs: &Self) -> Self {
             Self::new(
                 self.1 * rhs.2 - self.2 * rhs.1,
@@ -45,12 +50,15 @@ pub mod vector {
         }
 
         // getters
+        #[inline]
         pub fn x(&self) -> f64 {
             self.0
         }
+        #[inline]
         pub fn y(&self) -> f64 {
             self.1
         }
+        #[inline]
         pub fn z(&self) -> f64 {
             self.2
         }

@@ -18,7 +18,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // camera
     let focal_length = 1.;
     let viewport_height = 2.;
-    let viewport_width = viewport_height * (image_width / image_height) as f64;
+    let viewport_width = viewport_height * (image_width as f64 / image_height as f64);
     let camera_center = Vec3::new(0., 0., 0.);
 
     // calculate the vectors across the horizontal and down the vertical viewport edges.
@@ -38,24 +38,25 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         camera_center - Vec3::new(0., 0., focal_length) - viewport_u / 2. - viewport_v / 2.;
     let pixel00_loc = viewport_upper_left + 0.5 * (pixel_delta_u + pixel_delta_v);
 
+    let mut out = std::io::stdout();
     write!(
-        std::io::stdout(),  // P3 means colors are in ASCII
+        out,                // P3 means colors are in ASCII
         "P3\n{} {}\n255\n", // then coumns and rows,
         image_width,        // then 255 for max color,
         image_height        // then RGB triplets
     )?;
 
-    for i in 0..image_height {
-        for j in 0..image_width {
+    for y in 0..image_height {
+        for x in 0..image_width {
             let pixel_center =
-                pixel00_loc + (pixel_delta_u * i as f64) + (pixel_delta_v * j as f64);
+                pixel00_loc + (pixel_delta_u * x as f64) + (pixel_delta_v * y as f64);
             let ray_direction = pixel_center - camera_center;
             let ray = Ray::new(camera_center, ray_direction);
 
             let pixel_color = ray_color(&ray);
 
             // writing scaled color into Writer (stdout)
-            write_color(&mut std::io::stdout(), &pixel_color)?;
+            write_color(&mut out, &pixel_color)?;
         }
     }
 
@@ -68,6 +69,7 @@ fn hit_sphere(center: Vec3, radius: f64, ray: &Ray) -> bool {
     let b = -2.0 * ray.direction().dot(&oc);
     let c = oc.dot(&oc) - radius * radius;
     let discriminant = b * b - 4.0 * a * c;
+    // if b^2 - 4ac < 0, ray does not hit the sphere
     discriminant >= 0.0
 }
 
