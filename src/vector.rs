@@ -1,7 +1,9 @@
 pub mod vector {
     use std::{
         fmt::Display,
-        ops::{Add, AddAssign, Div, DivAssign, Index, Mul, MulAssign, Neg, Sub, SubAssign},
+        ops::{
+            Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, Neg, Sub, SubAssign,
+        },
     };
 
     #[repr(C)]
@@ -16,6 +18,14 @@ pub mod vector {
         // consts
         pub const ZERO: Self = Self(0., 0., 0.);
         pub const ONE: Self = Self(1., 1., 1.);
+
+        // cannot impl PartialEq in this way,
+        // because it violates the transitivity rule
+        pub fn eq_approx(&self, other: &Vec3) -> bool {
+            (self.0 - other.0).abs() < 1e-8
+                && (self.1 - other.1).abs() < 1e-8
+                && (self.2 - other.2).abs() < 1e-8
+        }
 
         // length of the vector
         #[inline]
@@ -64,17 +74,6 @@ pub mod vector {
         }
     }
 
-    // comparison operation, Partial, becuase of the floats' behaviour
-    // issue with transitivity. can break some std::cpllections
-    impl PartialEq for Vec3 {
-        fn eq(&self, other: &Self) -> bool {
-            (self.0 - other.0).abs() < 1e-8
-                && (self.1 - other.1).abs() < 1e-8
-                && (self.2 - other.2).abs() < 1e-8
-        }
-    }
-
-    // addition, both + and +=
     impl Add for Vec3 {
         type Output = Self;
 
@@ -161,6 +160,17 @@ pub mod vector {
                 1 => &self.1,
                 2 => &self.2,
                 _ => panic!("index out of range!"),
+            }
+        }
+    }
+
+    impl IndexMut<usize> for Vec3 {
+        fn index_mut(&mut self, index: usize) -> &mut Self::Output {
+            match index {
+                0 => &mut self.0,
+                1 => &mut self.1,
+                2 => &mut self.2,
+                _ => panic!("index out of range"),
             }
         }
     }

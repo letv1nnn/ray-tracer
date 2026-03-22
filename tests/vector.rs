@@ -12,41 +12,41 @@ fn creation_and_getters_of_a_vector() {
 fn vectors_equality() {
     let a = Vec3::new(1.000000001, 2.0, 3.0);
     let b = Vec3::new(1.0, 2.0, 3.0);
-    assert_eq!(a, b);
+    assert!(a.eq_approx(&b));
 }
 
 #[test]
 fn adding_and_subtracting_vectors() {
     let a = Vec3::new(1.0, 2.0, 3.0);
     let b = Vec3::new(4.0, 5.0, 6.0);
-    assert_eq!(a + b, Vec3::new(5.0, 7.0, 9.0));
+    assert!((a + b).eq_approx(&Vec3::new(5.0, 7.0, 9.0)));
 
     let mut c = a;
     c += b;
-    assert_eq!(c, Vec3::new(5.0, 7.0, 9.0));
+    assert!(c.eq_approx(&Vec3::new(5.0, 7.0, 9.0)));
 
-    assert_eq!(c - b, a);
+    assert!((c - b).eq_approx(&a));
 
     let mut d = c;
     d -= b;
-    assert_eq!(d, a);
+    assert!(d.eq_approx(&a));
 }
 
 #[test]
 fn vector_scaling() {
     let v = Vec3::new(1.0, -2.0, 3.0);
-    assert_eq!(v * 2.0, Vec3::new(2.0, -4.0, 6.0));
-    assert_eq!(2.0 * v, Vec3::new(2.0, -4.0, 6.0));
+    assert!((v * 2.0).eq_approx(&Vec3::new(2.0, -4.0, 6.0)));
+    assert!((2.0 * v).eq_approx(&Vec3::new(2.0, -4.0, 6.0)));
 
     let mut w = v;
     w *= 3.0;
-    assert_eq!(w, Vec3::new(3.0, -6.0, 9.0));
+    assert!(w.eq_approx(&Vec3::new(3.0, -6.0, 9.0)));
 
-    assert_eq!(w / 3.0, Vec3::new(1.0, -2.0, 3.0));
+    assert!((w / 3.0).eq_approx(&Vec3::new(1.0, -2.0, 3.0)));
 
     let mut u = w;
     u /= 3.0;
-    assert_eq!(u, v);
+    assert!(u.eq_approx(&v));
 }
 
 #[test]
@@ -69,7 +69,7 @@ fn dot_cross_products_of_vectors() {
     assert!((a.dot(&b) - 0.0).abs() < 1e-8);
 
     let c = a.cross(&b);
-    assert_eq!(c, Vec3::new(0.0, 0.0, 1.0));
+    assert!(c.eq_approx(&Vec3::new(0.0, 0.0, 1.0)));
 }
 
 #[test]
@@ -84,6 +84,6 @@ fn from_into_vector_convertions() {
     let point = [1., 2., 3.];
     let vec: Vec3 = point.into();
 
-    assert_eq!(vec, Vec3::new(1., 2., 3.));
-    assert_eq!(vec, Vec3::from([1., 2., 3.]));
+    assert!(vec.eq_approx(&Vec3::new(1., 2., 3.)));
+    assert!(vec.eq_approx(&Vec3::from([1., 2., 3.])));
 }
