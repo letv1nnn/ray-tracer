@@ -11,10 +11,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let rendered_image = RenderedImage::new(400, 2.0, Vec3::new(0.0, 0.0, 0.0));
 
     // calculate the location of the upper left pixel.
+    // we are moving to the center of the viewport, then diagonlly to the top-left corner
     let viewport_upper_left = rendered_image.camera_center()
         - Vec3::new(0., 0., Viewport::FOCAL_LENGTH)
         - rendered_image.viewport_u() / 2.0
         - rendered_image.viewport_v() / 2.0;
+    // defining the center of the first pixel
+    // moving slightly by the half of deltas
     let pixel00_loc = viewport_upper_left
         + 0.5 * (rendered_image.viewport_delta_u() + rendered_image.viewport_delta_v());
 
@@ -28,6 +31,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     for y in 0..rendered_image.image_height() {
         for x in 0..rendered_image.image_width() {
+            // moving the pixel center by delta_u * x and delta_v * y
             let pixel_center = pixel00_loc
                 + (rendered_image.viewport_delta_u() * x as f64)
                 + (rendered_image.viewport_delta_v() * y as f64);
