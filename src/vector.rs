@@ -21,6 +21,7 @@ pub mod vector {
 
         // cannot impl PartialEq in this way,
         // because it violates the transitivity rule
+        #[inline]
         pub fn eq_approx(&self, other: &Vec3) -> bool {
             (self.0 - other.0).abs() < 1e-8
                 && (self.1 - other.1).abs() < 1e-8

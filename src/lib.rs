@@ -4,3 +4,5 @@ pub mod color;
 pub mod ray;
 // vec3 strucutre
 pub mod vector;
+// rendered image setup
+pub mod rendered_image;

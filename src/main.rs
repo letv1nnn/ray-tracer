@@ -3,55 +3,36 @@ use std::io::Write;
 use ray_tracer::{
     color::{ColorRGB, write_color},
     ray::ray::Ray,
+    rendered_image::rendered_image_setup::{RenderedImage, Viewport},
     vector::vector::Vec3,
 };
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // image
-    const ASPECT_RATIO: f64 = 16.0 / 9.0;
-    let image_width = 400;
-
-    // calculate the image height
-    let image_height = (image_width as f64 / ASPECT_RATIO) as i32;
-    let image_height = if image_height < 1 { 1 } else { image_height };
-
-    // camera
-    let focal_length = 1.;
-    let viewport_height = 2.;
-    let viewport_width = viewport_height * (image_width as f64 / image_height as f64);
-    let camera_center = Vec3::new(0., 0., 0.);
-
-    // calculate the vectors across the horizontal and down the vertical viewport edges.
-    let (viewport_u, viewport_v) = (
-        Vec3::new(viewport_width, 0., 0.),
-        Vec3::new(0., -viewport_height, 0.),
-    );
-
-    // calculate the horizontal and vertical delta vectors from pixel to pixel.
-    let (pixel_delta_u, pixel_delta_v) = (
-        viewport_u / image_width as f64,
-        viewport_v / image_height as f64,
-    );
+    let rendered_image = RenderedImage::new(400, 2.0, Vec3::new(0.0, 0.0, 0.0));
 
     // calculate the location of the upper left pixel.
-    let viewport_upper_left =
-        camera_center - Vec3::new(0., 0., focal_length) - viewport_u / 2. - viewport_v / 2.;
-    let pixel00_loc = viewport_upper_left + 0.5 * (pixel_delta_u + pixel_delta_v);
+    let viewport_upper_left = rendered_image.camera_center()
+        - Vec3::new(0., 0., Viewport::FOCAL_LENGTH)
+        - rendered_image.viewport_u() / 2.0
+        - rendered_image.viewport_v() / 2.0;
+    let pixel00_loc = viewport_upper_left
+        + 0.5 * (rendered_image.viewport_delta_u() + rendered_image.viewport_delta_v());
 
     let mut out = std::io::stdout();
     write!(
-        out,                // P3 means colors are in ASCII
-        "P3\n{} {}\n255\n", // then coumns and rows,
-        image_width,        // then 255 for max color,
-        image_height        // then RGB triplets
+        out,                           // P3 means colors are in ASCII
+        "P3\n{} {}\n255\n",            // then coumns and rows,
+        rendered_image.image_width(),  // then 255 for max color,
+        rendered_image.image_height()  // then RGB triplets
     )?;
 
-    for y in 0..image_height {
-        for x in 0..image_width {
-            let pixel_center =
-                pixel00_loc + (pixel_delta_u * x as f64) + (pixel_delta_v * y as f64);
-            let ray_direction = pixel_center - camera_center;
-            let ray = Ray::new(camera_center, ray_direction);
+    for y in 0..rendered_image.image_height() {
+        for x in 0..rendered_image.image_width() {
+            let pixel_center = pixel00_loc
+                + (rendered_image.viewport_delta_u() * x as f64)
+                + (rendered_image.viewport_delta_v() * y as f64);
+            let ray_direction = pixel_center - rendered_image.camera_center();
+            let ray = Ray::new(rendered_image.camera_center(), ray_direction);
 
             let pixel_color = ray_color(&ray);
 
