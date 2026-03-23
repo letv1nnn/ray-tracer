@@ -18,14 +18,15 @@ pub mod vector {
         // consts
         pub const ZERO: Self = Self(0., 0., 0.);
         pub const ONE: Self = Self(1., 1., 1.);
+        pub const EPS: f64 = 1e-8;
 
         // cannot impl PartialEq in this way,
         // because it violates the transitivity rule
         #[inline]
         pub fn eq_approx(&self, other: &Vec3) -> bool {
-            (self.0 - other.0).abs() < 1e-8
-                && (self.1 - other.1).abs() < 1e-8
-                && (self.2 - other.2).abs() < 1e-8
+            (self.0 - other.0).abs() < Self::EPS
+                && (self.1 - other.1).abs() < Self::EPS
+                && (self.2 - other.2).abs() < Self::EPS
         }
 
         // length of the vector
@@ -42,7 +43,11 @@ pub mod vector {
         #[inline]
         pub fn try_unit(&self) -> Option<Self> {
             let len = self.length();
-            if len == 0. { None } else { Some(*self / len) }
+            if len < f64::EPSILON {
+                None
+            } else {
+                Some(*self / len)
+            }
         }
 
         // dot product
@@ -78,11 +83,13 @@ pub mod vector {
     impl Add for Vec3 {
         type Output = Self;
 
+        #[inline]
         fn add(self, rhs: Self) -> Self::Output {
             Self::new(self.0 + rhs.0, self.1 + rhs.1, self.2 + rhs.2)
         }
     }
     impl AddAssign for Vec3 {
+        #[inline]
         fn add_assign(&mut self, rhs: Self) {
             self.0 += rhs.0;
             self.1 += rhs.1;
@@ -94,11 +101,13 @@ pub mod vector {
     impl Sub for Vec3 {
         type Output = Self;
 
+        #[inline]
         fn sub(self, rhs: Self) -> Self::Output {
             Self::new(self.0 - rhs.0, self.1 - rhs.1, self.2 - rhs.2)
         }
     }
     impl SubAssign for Vec3 {
+        #[inline]
         fn sub_assign(&mut self, rhs: Self) {
             self.0 -= rhs.0;
             self.1 -= rhs.1;
@@ -110,6 +119,7 @@ pub mod vector {
     impl Neg for Vec3 {
         type Output = Self;
 
+        #[inline]
         fn neg(self) -> Self::Output {
             Self::new(-self.0, -self.1, -self.2)
         }
@@ -119,6 +129,7 @@ pub mod vector {
     impl Mul<Vec3> for f64 {
         type Output = Vec3;
 
+        #[inline]
         fn mul(self, rhs: Vec3) -> Self::Output {
             Vec3::new(self * rhs.0, self * rhs.1, self * rhs.2)
         }
@@ -126,11 +137,13 @@ pub mod vector {
     impl Mul<f64> for Vec3 {
         type Output = Self;
 
+        #[inline]
         fn mul(self, rhs: f64) -> Self::Output {
             Self::new(self.0 * rhs, self.1 * rhs, self.2 * rhs)
         }
     }
     impl MulAssign<f64> for Vec3 {
+        #[inline]
         fn mul_assign(&mut self, rhs: f64) {
             self.0 *= rhs;
             self.1 *= rhs;
@@ -140,11 +153,13 @@ pub mod vector {
     impl Div<f64> for Vec3 {
         type Output = Self;
 
+        #[inline]
         fn div(self, rhs: f64) -> Self::Output {
             Self::new(self.0 / rhs, self.1 / rhs, self.2 / rhs)
         }
     }
     impl DivAssign<f64> for Vec3 {
+        #[inline]
         fn div_assign(&mut self, rhs: f64) {
             self.0 /= rhs;
             self.1 /= rhs;
@@ -155,17 +170,19 @@ pub mod vector {
     impl Index<usize> for Vec3 {
         type Output = f64;
 
+        #[inline]
         fn index(&self, index: usize) -> &Self::Output {
             match index {
                 0 => &self.0,
                 1 => &self.1,
                 2 => &self.2,
-                _ => panic!("index out of range!"),
+                _ => panic!("index out of range"),
             }
         }
     }
 
     impl IndexMut<usize> for Vec3 {
+        #[inline]
         fn index_mut(&mut self, index: usize) -> &mut Self::Output {
             match index {
                 0 => &mut self.0,
@@ -176,6 +193,12 @@ pub mod vector {
         }
     }
 
+    impl Default for Vec3 {
+        fn default() -> Self {
+            Vec3::ZERO
+        }
+    }
+
     // display for proper io operations
     impl Display for Vec3 {
         fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -183,7 +206,7 @@ pub mod vector {
         }
     }
 
-    // from and into traits for suitable convertions
+    // from and into traits for suitable conversions
     impl From<[f64; 3]> for Vec3 {
         fn from(value: [f64; 3]) -> Self {
             Self::new(value[0], value[1], value[2])

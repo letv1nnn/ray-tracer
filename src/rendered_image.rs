@@ -1,17 +1,20 @@
 pub mod rendered_image_setup {
     use crate::vector::vector::Vec3;
 
+    #[derive(Debug, Clone)]
     pub struct RenderedImage {
         image: Image,
         viewport: Viewport,
         camera_center: Vec3,
     }
 
+    #[derive(Debug, Clone, Copy)]
     pub struct Image {
-        width: i32,
-        height: i32,
+        width: u32,
+        height: u32,
     }
 
+    #[derive(Debug, Clone)]
     pub struct Viewport {
         width: f64,
         height: f64,
@@ -22,9 +25,10 @@ pub mod rendered_image_setup {
     }
 
     impl Image {
-        pub fn new(width: i32) -> Self {
-            let height = width as f64 / RenderedImage::ASPECT_RATIO;
-            let height = if height < 1. { 1. } else { height } as i32;
+        pub fn new(width: u32) -> Self {
+            let height = (width as f64 / RenderedImage::ASPECT_RATIO)
+                .round()
+                .max(1.0) as u32;
             Self { width, height }
         }
     }
@@ -61,7 +65,7 @@ pub mod rendered_image_setup {
         // ideal aspect ration
         pub const ASPECT_RATIO: f64 = 16.0 / 9.0;
 
-        pub fn new(image_width: i32, viewport_height: f64, camera_center: Vec3) -> Self {
+        pub fn new(image_width: u32, viewport_height: f64, camera_center: Vec3) -> Self {
             let image = Image::new(image_width);
             let viewport = Viewport::new(viewport_height, &image);
             Self {
@@ -71,10 +75,10 @@ pub mod rendered_image_setup {
             }
         }
 
-        pub fn image_width(&self) -> i32 {
+        pub fn image_width(&self) -> u32 {
             self.image.width
         }
-        pub fn image_height(&self) -> i32 {
+        pub fn image_height(&self) -> u32 {
             self.image.height
         }
 
