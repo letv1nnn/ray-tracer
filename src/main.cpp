@@ -1,6 +1,8 @@
 #include <iostream>
 
 #include "types.hpp"
+#include "color.hpp"
+#include "vec3.hpp"
 
 constexpr usize image_width{256};
 constexpr usize image_height{256};
@@ -13,18 +15,19 @@ int main([[maybe_unused]]int argc, [[maybe_unused]]char **argv) {
 
     for (usize y{}; y < image_height; ++y) {
         for (usize x{}; x < image_width; ++x) {
-            const f64 r = static_cast<f64>(x) / (image_width - 1);
-            const f64 g = static_cast<f64>(y) / (image_height - 1);
-            const f64 b = 0.0;
 
-            std::cout << to_color(r) << ' ' << to_color(g) << ' ' << to_color(b) << '\n';
+            const raytracer::vec3 normilized_color(
+                static_cast<f64>(x) / (image_width - 1),
+                static_cast<f64>(y) / (image_height - 1),
+                0.0
+            );
+            
+            const raytracer::color rgb8 = raytracer::to_rgb8(normilized_color);
+            
+            raytracer::write_color(std::cout, rgb8);
         }
     }
 
     return 0;
-}
-
-constexpr i32 to_color(f64 value) {
-    return static_cast<i32>(255.999 * value);
 }
 
