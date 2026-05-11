@@ -2,7 +2,6 @@
 
 #include <cmath>
 #include <ostream>
-#include <stdexcept>
 
 #include "types.hpp"
 
@@ -24,8 +23,8 @@ public: // operators
         return *this;
     }
     constexpr vec3& operator/=(f64 scalar) {
-        if (scalar == 0.0) throw std::runtime_error("vec3 division by zero");
-        x /= scalar; y /= scalar; z /= scalar;
+        if (scalar == 0.0) { x = 0.0; y = 0.0; z = 0.0; }
+        else { x /= scalar; y /= scalar; z /= scalar; }
         return *this;
     }
 public: // other methods
@@ -48,7 +47,7 @@ inline vec3 operator-(const vec3& va, const vec3& vb) {
     return vec3(va.x - vb.x, va.y - vb.y, va.z - vb.z);
 }
 inline vec3 operator*(const vec3& va, const vec3& vb) { // not a dot product
-    return vec3(va.x * vb.x, va.y * vb.y, va.z * vb.y);
+    return vec3(va.x * vb.x, va.y * vb.y, va.z * vb.z);
 }
 inline vec3 operator*(f64 scalar, const vec3& v) {
     return vec3(v.x * scalar, v.y * scalar, v.z * scalar);
@@ -57,8 +56,7 @@ inline vec3 operator*(const vec3& v, f64 scalar) {
     return scalar * v;
 }
 inline vec3 operator/(const vec3& v, double scalar) {
-    if (scalar == 0) throw std::runtime_error("vec3 division by zero");
-    return (1/scalar) * v;
+    return (scalar != 0) ? (1/scalar) * v : vec3{};
 }
 inline f64 dot(const vec3& va, const vec3& vb) {
     return va.x * vb.x + va.y * vb.y + va.z * vb.z;
