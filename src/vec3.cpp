@@ -1,0 +1,64 @@
+#include "vec3.hpp"
+
+namespace raytracer {
+
+// constructors
+constexpr vec3::vec3(f64 x, f64 y, f64 z) : x{x}, y{y}, z{z} {}
+
+// operators
+constexpr vec3& vec3::operator+=(const vec3& other) {
+    x += other.x; y += other.y; z += other.z;
+    return *this;
+}
+constexpr vec3& vec3::operator*=(f64 scalar) {
+    x *= scalar; y *= scalar; z *= scalar;
+    return *this;
+}
+constexpr vec3& vec3::operator/=(f64 scalar) {
+    if (scalar == 0.0) throw std::runtime_error("vec3 division by zero");
+    x /= scalar; y /= scalar; z /= scalar;
+    return *this;
+}
+
+// other methods
+constexpr f64 vec3::length() const {
+    return std::sqrt(length_squared());
+}
+constexpr f64 vec3::length_squared() const {
+    return x * x + y * y + z * z;
+}
+
+// utility functions
+inline std::ostream& operator<<(std::ostream& out, const vec3& v) {
+    return out << v.x << ' ' << v.y << ' ' << v.z;
+}
+inline vec3 operator+(const vec3& va, const vec3& vb) {
+    return vec3(va.x + vb.x, va.y + vb.y, va.z + vb.z);
+}
+inline vec3 operator-(const vec3& va, const vec3& vb) {
+    return vec3(va.x - vb.x, va.y - vb.y, va.z - vb.z);
+}
+inline vec3 operator*(const vec3& va, const vec3& vb) { // not a dot product
+    return vec3(va.x * vb.x, va.y * vb.y, va.z * vb.y);
+}
+inline vec3 operator*(f64 scalar, const vec3& v) {
+    return vec3(v.x * scalar, v.y * scalar, v.z * scalar);
+}
+inline vec3 operator*(const vec3& v, f64 scalar) {
+    return scalar * v;
+}
+inline vec3 operator/(const vec3& v, double scalar) {
+    if (scalar == 0) throw std::runtime_error("vec3 division by zero");
+    return (1/scalar) * v;
+}
+inline f64 dot(const vec3& va, const vec3& vb) {
+    return va.x * vb.x + va.y * vb.y + va.z * vb.z;
+}
+inline vec3 cross(const vec3& va, const vec3& vb) {
+    return vec3(va.y * vb.z - va.z * vb.y, va.z * vb.x - va.x * vb.z, va.x * vb.y - va.y * vb.x);
+}
+inline vec3 unit(const vec3& v) {
+    return v / v.length();
+}
+
+}
