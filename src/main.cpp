@@ -6,7 +6,18 @@
 #include "vec3.hpp"
 #include "ray.hpp"
 
-constexpr raytracer::color ray_color(const raytracer::ray& r) {
+bool hit_sphere(const raytracer::vec3& center, double radius, const raytracer::ray& r) {
+    const raytracer::vec3 oc = center - r.get_origin();
+    const auto a = raytracer::dot(r.get_direction(), r.get_direction()); 
+    const auto b = -2.0 * raytracer::dot(r.get_direction(), oc);    
+    const auto c = raytracer::dot(oc, oc) - radius * radius;
+    const auto discriminant = b * b - 4 * a * c;
+    return discriminant >= 0.0;
+}
+
+raytracer::color ray_color(const raytracer::ray& r) {
+    if (hit_sphere(raytracer::vec3{0, 0, -1}, 0.5, r))
+        return raytracer::color{1, 0, 0};
     const raytracer::vec3 unit_direction = raytracer::unit(r.get_direction());
     const auto a = 0.5 * (unit_direction.y + 1.0);
     return (1.0 - a) * raytracer::color{1.0, 1.0, 1.0} + a * raytracer::color{0.5, 0.7, 1.0};
@@ -32,8 +43,8 @@ int main([[maybe_unused]]int argc, [[maybe_unused]]char **argv) {
     constexpr raytracer::vec3 viewport_v{0.0, -viewport_height, 0.0}; // vertical
 
     // calculate the horizontal and vertical delta vectors from pixel to pixel.
-    const raytracer::vec3 pixel_delta_u = viewport_u / viewport_width;
-    const raytracer::vec3 pixel_delta_v = viewport_v / viewport_height;
+    const raytracer::vec3 pixel_delta_u = viewport_u / image_width;
+    const raytracer::vec3 pixel_delta_v = viewport_v / image_height;
 
     // calculate the location of the upper left pixel.
     // the initial position is not (0, 0), since this is the center of the viewport.
