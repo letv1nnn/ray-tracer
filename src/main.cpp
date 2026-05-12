@@ -38,7 +38,7 @@ int main([[maybe_unused]]int argc, [[maybe_unused]]char **argv) {
     // calculate the location of the upper left pixel.
     // the initial position is not (0, 0), since this is the center of the viewport.
     const raytracer::vec3 viewport_upper_left = camera_center - raytracer::vec3(0.0, 0.0, focal_length) - viewport_u / 2 - viewport_v / 2;
-    const raytracer::vec3 pixel100_loc = viewport_upper_left + 0.5 * (pixel_delta_u + pixel_delta_v);
+    const raytracer::vec3 pixel00_loc = viewport_upper_left + 0.5 * (pixel_delta_u + pixel_delta_v);
 
     // rendering
     std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
@@ -46,19 +46,8 @@ int main([[maybe_unused]]int argc, [[maybe_unused]]char **argv) {
     for (usize y{}; y < image_height; ++y) {
         std::clog << "\r Scanlines remaining: " << image_height - y << ' ' << std::flush;
         for (usize x{}; x < image_width; ++x) {
-            /*
-            const raytracer::vec3 normilized_color(
-                static_cast<f64>(x) / (image_width - 1),
-                static_cast<f64>(y) / (image_height - 1),
-                0.0
-            );
-            
-            const raytracer::color rgb8 = raytracer::to_rgb8(normilized_color);
-            
-            raytracer::write_color(std::cout, rgb8);
-            */
 
-            const raytracer::vec3 pixel_center = pixel100_loc + (x * pixel_delta_u) + (y * pixel_delta_v);
+            const raytracer::vec3 pixel_center = pixel00_loc + (x * pixel_delta_u) + (y * pixel_delta_v);
             const raytracer::vec3 ray_direction = pixel_center - camera_center;
             const raytracer::ray r(camera_center, ray_direction);
 
