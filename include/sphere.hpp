@@ -1,0 +1,42 @@
+#pragma once
+
+#include "hittable.hpp"
+#include "types.hpp"
+#include "vec3.hpp"
+
+namespace raytracer {
+
+class sphere : public hittable {
+private: // attributes
+    vec3 center;
+    f64 radius;
+public: // constructor
+    constexpr sphere(const vec3& center, f64 radius) : center{center}, radius{std::fmax(0.0, radius)} {}
+public: // other methods
+    bool hit(const ray &r, f64 ray_tmin, f64 ray_tmax, hit_record &rec) const override {
+        const raytracer::vec3 oc = center - r.get_origin();
+        const f64 a = r.get_direction().length_squared();
+        const f64 h = raytracer::dot(r.get_direction(), oc);
+        const f64 c = oc.length_squared() - radius * radius;
+        
+        const f64 discriminant = h * h - a * c;
+        if (discriminant < 0.0) return 0;
+        
+        const f64 sqrtd = std::sqrt(discriminant);
+
+        // find the nearest root that lies the acceptable range.
+        f64 root = (h - sqrtd) / a;
+        if (root <= ray_tmin || root >= ray_tmax) {
+            root = (h + sqrtd) / a;
+            if (root <= ray_tmin || root >= ray_tmax) return 0;
+        }
+
+        rec.t = root;
+        rec.p = r.at(rec.t);
+        rec.normal = (rec.p - center) / radius;
+
+        return 1;
+    }
+};
+
+}
