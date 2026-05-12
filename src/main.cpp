@@ -8,21 +8,21 @@
 
 f64 hit_sphere(const raytracer::vec3& center, double radius, const raytracer::ray& r) {
     const raytracer::vec3 oc = center - r.get_origin();
-    const auto a = raytracer::dot(r.get_direction(), r.get_direction()); // direction squared
-    const auto b = -2.0 * raytracer::dot(r.get_direction(), oc); // -2 * direction * (C - Q)
-    const auto c = raytracer::dot(oc, oc) - radius * radius; // oc squared - radius squared
-    const auto discriminant = b * b - 4 * a * c;
-    return (discriminant < 0.0) ? -1.0 : ((-b - std::sqrt(discriminant)) / (2.0 * a));
+    const f64 a = r.get_direction().length_squared();
+    const f64 h = raytracer::dot(r.get_direction(), oc);
+    const f64 c = oc.length_squared() - radius * radius;
+    const f64 discriminant = h * h - a * c;
+    return (discriminant < 0.0) ? -1.0 : ((h - std::sqrt(discriminant)) / a);
 }
 
 raytracer::color ray_color(const raytracer::ray& r) {
-    const auto t = hit_sphere(raytracer::vec3{0, 0, -1}, 0.5, r);
+    const f64 t = hit_sphere(raytracer::vec3{0, 0, -1}, 0.5, r);
     if (t > 0.0) {
         const raytracer::vec3 N = raytracer::unit(r.at(t) - raytracer::vec3{0, 0, -1});
         return 0.5 * raytracer::color{N.x + 1, N.y + 1, N.z + 1};
     }
     const raytracer::vec3 unit_direction = raytracer::unit(r.get_direction());
-    const auto a = 0.5 * (unit_direction.y + 1.0);
+    const f64 a = 0.5 * (unit_direction.y + 1.0);
     return (1.0 - a) * raytracer::color{1.0, 1.0, 1.0} + a * raytracer::color{0.5, 0.7, 1.0};
 }
 
