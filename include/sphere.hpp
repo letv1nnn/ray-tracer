@@ -34,6 +34,8 @@ public: // other methods
         rec.t = root;
         rec.p = r.at(rec.t);
         rec.normal = (rec.p - center) / radius;
+        const vec3 outward = (rec.p - center) / radius;  // dividing by radius to normilize, since
+        rec.set_face_normal(r, outward); // set_face_normal takes normilized normal
 
         return 1;
     }

@@ -27,6 +27,9 @@ public: // operators
         else { x /= scalar; y /= scalar; z /= scalar; }
         return *this;
     }
+    constexpr vec3 operator-() const noexcept {
+        return vec3(-x, -y, -z);
+    }
 public: // other methods
     constexpr f64 length() const {
         return std::sqrt(length_squared());
