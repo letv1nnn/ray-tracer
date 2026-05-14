@@ -1,14 +1,14 @@
 #include <cstdlib>
 
-#include "color.hpp"
 #include "common.hpp"
 #include "hittable.hpp"
 #include "hittable_list.hpp"
 #include "sphere.hpp"
+#include "interval.hpp"
 
 raytracer::color ray_color(const raytracer::ray& r, const raytracer::hittable& world) {
     raytracer::hit_record rec;
-    if (world.hit(r, 0, infinity, rec)) {
+    if (world.hit(r, raytracer::interval{0, infinity}, rec)) {
         return 0.5 * (rec.normal + raytracer::color{1.0, 1.0, 1.0});
     }
 

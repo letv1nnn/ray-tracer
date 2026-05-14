@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common.hpp"
+#include "interval.hpp"
 
 namespace raytracer {
 
@@ -22,7 +23,7 @@ class hittable {
 public: // constructors and destructors
     virtual ~hittable() = default;
 public: // other methods
-    virtual bool hit(const ray& r, f64 ray_tmin, f64 ray_tmax, hit_record& rec) const = 0;
+    virtual bool hit(const ray& r, interval ray_t, hit_record& rec) const = 0;
 };
 
 }

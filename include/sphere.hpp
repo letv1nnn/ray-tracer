@@ -1,5 +1,6 @@
 #pragma once
 
+#include "interval.hpp"
 #include "hittable.hpp"
 
 namespace raytracer {
@@ -11,7 +12,7 @@ private: // attributes
 public: // constructor
     constexpr sphere(const vec3& center, f64 radius) : center{center}, radius{std::fmax(0.0, radius)} {}
 public: // other methods
-    bool hit(const ray &r, f64 ray_tmin, f64 ray_tmax, hit_record &rec) const override {
+    bool hit(const ray &r, interval ray_t, hit_record &rec) const override {
         const raytracer::vec3 oc = center - r.get_origin();
         const f64 a = r.get_direction().length_squared();
         const f64 h = raytracer::dot(r.get_direction(), oc);
@@ -24,9 +25,9 @@ public: // other methods
 
         // find the nearest root that lies the acceptable range.
         f64 root = (h - sqrtd) / a;
-        if (root <= ray_tmin || root >= ray_tmax) {
+        if (!ray_t.surrounds(root)) {
             root = (h + sqrtd) / a;
-            if (root <= ray_tmin || root >= ray_tmax) return 0;
+            if (!ray_t.surrounds(root)) return 0;
         }
 
         rec.t = root;
