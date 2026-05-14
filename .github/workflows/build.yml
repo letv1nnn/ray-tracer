@@ -1,0 +1,19 @@
+name: CMake build
+
+on:
+  push:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Configure CMake
+        run: cmake -B build -S . -DCMAKE_CXX_STANDARD=20
+
+      - name: Build
+        run: cmake --build build --config Release
+
