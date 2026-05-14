@@ -1,3 +1,17 @@
+# Build
 build/
-.cache/
+cmake-build-*/
 compile_commands.json
+
+# Binaries
+*.out
+*.o
+*.so
+*.a
+
+# Cache / editor
+.cache/
+.vscode/
+*.swp
+*~
+.DS_Store
