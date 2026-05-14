@@ -1,26 +1,17 @@
 #include <cstdlib>
-#include <iostream>
 
-#include "types.hpp"
 #include "color.hpp"
-#include "vec3.hpp"
-#include "ray.hpp"
+#include "common.hpp"
+#include "hittable.hpp"
+#include "hittable_list.hpp"
+#include "sphere.hpp"
 
-f64 hit_sphere(const raytracer::vec3& center, double radius, const raytracer::ray& r) {
-    const raytracer::vec3 oc = center - r.get_origin();
-    const f64 a = r.get_direction().length_squared();
-    const f64 h = raytracer::dot(r.get_direction(), oc);
-    const f64 c = oc.length_squared() - radius * radius;
-    const f64 discriminant = h * h - a * c;
-    return (discriminant < 0.0) ? -1.0 : ((h - std::sqrt(discriminant)) / a);
-}
-
-raytracer::color ray_color(const raytracer::ray& r) {
-    const f64 t = hit_sphere(raytracer::vec3{0, 0, -1}, 0.5, r);
-    if (t > 0.0) {
-        const raytracer::vec3 N = raytracer::unit(r.at(t) - raytracer::vec3{0, 0, -1});
-        return 0.5 * raytracer::color{N.x + 1, N.y + 1, N.z + 1};
+raytracer::color ray_color(const raytracer::ray& r, const raytracer::hittable& world) {
+    raytracer::hit_record rec;
+    if (world.hit(r, 0, infinity, rec)) {
+        return 0.5 * (rec.normal + raytracer::color{1.0, 1.0, 1.0});
     }
+
     const raytracer::vec3 unit_direction = raytracer::unit(r.get_direction());
     const f64 a = 0.5 * (unit_direction.y + 1.0);
     return (1.0 - a) * raytracer::color{1.0, 1.0, 1.0} + a * raytracer::color{0.5, 0.7, 1.0};
@@ -33,6 +24,11 @@ int main([[maybe_unused]]int argc, [[maybe_unused]]char **argv) {
     
     // calculate the image height, and ensure that it's at least 1.
     constexpr i32 image_height = std::max(1, static_cast<i32>(image_width / aspect_ratio)); 
+
+    // world
+    raytracer::hittable_list world;
+    world.add(std::make_shared<raytracer::sphere>(raytracer::vec3{0, 0, -1}, 0.5));
+    world.add(std::make_shared<raytracer::sphere>(raytracer::vec3{0, -100.5, -1}, 100));
 
     // camera
     constexpr f64 focal_length{1.0}; // distance from the camera to the viewport.
@@ -65,7 +61,7 @@ int main([[maybe_unused]]int argc, [[maybe_unused]]char **argv) {
             const raytracer::vec3 ray_direction = pixel_center - camera_center;
             const raytracer::ray r(camera_center, ray_direction);
 
-            const raytracer::color pixel_color = raytracer::to_rgb8(ray_color(r));
+            const raytracer::color pixel_color = raytracer::to_rgb8(ray_color(r, world));
             raytracer::write_color(std::cout, pixel_color);
         }
     }
