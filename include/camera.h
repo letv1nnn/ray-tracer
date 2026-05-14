@@ -7,16 +7,23 @@ namespace raytracer {
 
 class camera {
 private: // attributes
-    f64 aspect_ratio{1.0};
-    i32 image_width{100};
-
+    f64 aspect_ratio;   // resolution ratio
+    i32 image_width;    // render image width
     i32 image_height;   // render image height
     vec3 center;        // camera center
     vec3 pixel00_loc;   // location of pixel (0, 0)
     vec3 pixel_delta_u; // offset to pixel to the right
     vec3 pixel_delta_v; // offset to pixel below
 public: // constructors and destructors
-
+    constexpr camera(f64 aspect_ratio = 1.0, i32 image_width = 100) : aspect_ratio{aspect_ratio}, image_width{image_width} {}
+public: // getters and setters
+    constexpr f64 get_aspect_ratio() const noexcept { return aspect_ratio; }
+    constexpr i32 get_image_width() const noexcept { return image_width; }
+    constexpr i32 get_image_height() const noexcept { return image_height; }
+    constexpr const vec3& get_center() const noexcept { return center; }
+    constexpr const vec3& get_pixel00_loc() const noexcept { return pixel00_loc; }
+    constexpr const vec3& get_pixel_delta_u() const noexcept { return pixel_delta_u; }
+    constexpr const vec3& get_pixel_delta_v() const noexcept { return pixel_delta_v; }
 private: // private helper methods
     void initialize() {
         // calculate the image height, and ensure that it's at least 1.
