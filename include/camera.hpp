@@ -7,19 +7,24 @@ namespace raytracer {
 
 class camera {
 private: // attributes
-    f64 aspect_ratio;   // resolution ratio
-    i32 image_width;    // render image width
-    i32 image_height;   // render image height
-    vec3 center;        // camera center
-    vec3 pixel00_loc;   // location of pixel (0, 0)
-    vec3 pixel_delta_u; // offset to pixel to the right
-    vec3 pixel_delta_v; // offset to pixel below
+    f64 aspect_ratio;       // resolution ratio
+    i32 image_width;        // render image width
+    i32 image_height;       // render image height
+    i32 samples_per_pixel;  // number of samples per pixel for antialiasing
+    f64 pixel_samples_scale;// color scale factor for a sum of pixel samples
+    vec3 center;            // camera center
+    vec3 pixel00_loc;       // location of pixel (0, 0)
+    vec3 pixel_delta_u;     // offset to pixel to the right
+    vec3 pixel_delta_v;     // offset to pixel below
 public: // constructors and destructors
-    constexpr camera(f64 aspect_ratio = 1.0, i32 image_width = 100) : aspect_ratio{aspect_ratio}, image_width{image_width} {}
+    constexpr camera(f64 aspect_ratio = 1.0, i32 image_width = 100, i32 samples_per_pixel = 10) 
+        : aspect_ratio{aspect_ratio}, image_width{image_width}, samples_per_pixel{samples_per_pixel} {}
 public: // getters and setters
     constexpr f64 get_aspect_ratio() const noexcept { return aspect_ratio; }
     constexpr i32 get_image_width() const noexcept { return image_width; }
     constexpr i32 get_image_height() const noexcept { return image_height; }
+    constexpr i32 get_samples_per_pixel() const noexcept { return samples_per_pixel; }
+    constexpr i32 get_pixel_samples_scale() const noexcept { return pixel_samples_scale; }
     constexpr const vec3& get_center() const noexcept { return center; }
     constexpr const vec3& get_pixel00_loc() const noexcept { return pixel00_loc; }
     constexpr const vec3& get_pixel_delta_u() const noexcept { return pixel_delta_u; }
@@ -28,6 +33,8 @@ private: // private helper methods
     void initialize() {
         // calculate the image height, and ensure that it's at least 1.
         image_height = std::max(1, static_cast<i32>(image_width / aspect_ratio));
+        
+        pixel_samples_scale = 1.0 / samples_per_pixel;
 
         center = vec3{};
 
@@ -52,13 +59,27 @@ private: // private helper methods
     }
     color ray_color(const ray& r, const hittable& world) const {
         hit_record rec;
-        if (world.hit(r, interval{0, infinity}, rec)) {
+        if (world.hit(r, interval{0.0, infinity}, rec)) {
             return 0.5 * (rec.normal + raytracer::color{1.0, 1.0, 1.0});
         }
 
         const vec3 unit_direction = unit(r.get_direction());
         const f64 a = 0.5 * (unit_direction.y + 1.0);
         return (1.0 - a) * color{1.0, 1.0, 1.0} + a * color{0.5, 0.7, 1.0};
+    }
+    ray get_ray(i32 x, i32 y) {
+        // construct a camera ray originating from the origin and directed at randomly smapled
+        // point around the pixel location x, y.
+        const auto offset = sample_square();
+        const auto pixel_sample = pixel00_loc + ((x + offset.x) * pixel_delta_u) + ((y + offset.y) * pixel_delta_v);
+        
+        const auto ray_origin = center;
+        const auto  ray_direction = pixel_sample - ray_origin;
+    
+        return ray(ray_origin, ray_direction);
+    }
+    inline vec3 sample_square() const {
+        return vec3{random_f64() - 0.5, random_f64() - 0.5, 0.0};
     }
 public: // other methods
     void render(const hittable& world) {
@@ -69,13 +90,13 @@ public: // other methods
         for (usize y{}; y < image_height; ++y) {
             std::clog << "\r Scanlines remaining: " << image_height - y << ' ' << std::flush;
             for (usize x{}; x < image_width; ++x) {
-
-                const vec3 pixel_center = pixel00_loc + (x * pixel_delta_u) + (y * pixel_delta_v);
-                const vec3 ray_direction = pixel_center - center;
-                const ray r{center, ray_direction};
-
-                const color pixel_color = to_rgb8(ray_color(r, world));
-                write_color(std::cout, pixel_color);
+                color pixel_color{};
+                for (i32 sample{}; sample < samples_per_pixel; ++sample) {
+                    ray r = get_ray(x, y);
+                    pixel_color += ray_color(r, world);
+                }
+                
+                write_color(std::cout, pixel_samples_scale * pixel_color);
             }
         }
 

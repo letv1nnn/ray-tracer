@@ -60,3 +60,11 @@ After setting up the normals, the following question occured ***Which side of th
 
 The ground here is just a very large sphere with a center at ***(0, -100.5, -1)*** and with the radius of 100.
 
+### anitaliasing
+
+![default sphere](./assets/sphere_with_ground.jpg) ![sphere with antialiasing](./assets/antialiased_sphere.jpg)
+
+Antialiasing works by shooting multiple rays at different position inside the same pixel and averaging the 
+returned colors. This approximates how real cameras capture light over an area instead of from a single 
+point, producing smoother edges and reducing jagged artifacts.
+

@@ -1,6 +1,8 @@
 #pragma once
 
-#include "common.hpp"
+#include "vec3.hpp"
+#include "types.hpp"
+#include "interval.hpp"
 
 namespace raytracer {
 
@@ -16,7 +18,12 @@ constexpr color to_rgb8(color normalized_color) {
 
 // write color to out
 void write_color(std::ostream& out, color rgb8_color) {
-    out << rgb8_color.x << ' ' << rgb8_color.y << ' ' << rgb8_color.z << '\n';
+    static const interval intensity{0.0, 0.999}; 
+    i32 rbyte = static_cast<i32>(256 * intensity.clamp(rgb8_color.x));
+    i32 gbyte = static_cast<i32>(256 * intensity.clamp(rgb8_color.y));
+    i32 bbyte = static_cast<i32>(256 * intensity.clamp(rgb8_color.z));
+
+    out << rbyte << ' ' << gbyte << ' ' << bbyte << '\n';
 }
 
 }
