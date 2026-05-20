@@ -38,6 +38,11 @@ public: // other methods
     constexpr f64 length_squared() const {
         return x * x + y * y + z * z;
     }
+    constexpr bool near_zero() const {
+        // return true if the vector is close to zero in all dimensions.
+        const auto s = 1e-8;
+        return (std::fabs(x) < s) && (std::fabs(y) < s) && (std::fabs(z) < s);
+    }
 public: // static methods
     static vec3 random() {
         return vec3{random_f64(), random_f64(), random_f64()};

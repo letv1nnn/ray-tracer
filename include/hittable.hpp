@@ -5,10 +5,13 @@
 
 namespace raytracer {
 
+class material;
+
 struct hit_record {
 // attributes
     vec3 p;
     vec3 normal;
+    std::shared_ptr<material> mat;
     f64 t;
     bool front_face;
 // other methods

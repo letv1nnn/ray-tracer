@@ -1,7 +1,7 @@
 #pragma once
 
-#include "interval.hpp"
 #include "hittable.hpp"
+#include "interval.hpp"
 
 namespace raytracer {
 
@@ -9,8 +9,11 @@ class sphere : public hittable {
 private: // attributes
     vec3 center;
     f64 radius;
+    std::shared_ptr<material> mat;
 public: // constructor
-    constexpr sphere(const vec3& center, f64 radius) : center{center}, radius{std::fmax(0.0, radius)} {}
+    constexpr sphere(const vec3& center, f64 radius) : center{center}, radius{std::fmax(0.0, radius)} {
+        // TODO: Initialize the material pointer `mat`.
+    }
 public: // other methods
     bool hit(const ray &r, interval ray_t, hit_record &rec) const override {
         const raytracer::vec3 oc = center - r.get_origin();
@@ -35,6 +38,7 @@ public: // other methods
         rec.normal = (rec.p - center) / radius;
         const vec3 outward = (rec.p - center) / radius;  // dividing by radius to normilize, since
         rec.set_face_normal(r, outward); // set_face_normal takes normilized normal
+        rec.mat = mat;
 
         return 1;
     }
