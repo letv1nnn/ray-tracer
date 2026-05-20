@@ -68,3 +68,13 @@ Antialiasing works by shooting multiple rays at different position inside the sa
 returned colors. This approximates how real cameras capture light over an area instead of from a single 
 point, producing smoother edges and reducing jagged artifacts.
 
+### diffuse materials
+
+The diffuse rendering is implemented by repeatedly generating random bounce directions above the surface and averaging the resulting light contributions.
+
+![simple diffused sphere](./assets/simple_diffuse_sphere.jpg)
+
+After using gamma correction for accurate color intensity, I got the following rendered image.
+
+![gamma-corrected sphere](./assets/gamma_corrected_diffuse_sphere.jpg)
+

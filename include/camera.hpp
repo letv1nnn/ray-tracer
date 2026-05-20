@@ -1,7 +1,7 @@
 #pragma once
 
-#include "common.hpp"
 #include "hittable.hpp"
+#include "vec3.hpp"
 
 namespace raytracer {
 
@@ -67,7 +67,7 @@ private: // private helper methods
         
         hit_record rec;
         if (world.hit(r, interval{0.001, infinity}, rec)) {
-            const vec3 direction = random_on_hemisphere(rec.normal);
+            const vec3 direction = rec.normal + random_unit_vector();
             return 0.5 * ray_color(ray{rec.p, direction}, depth - 1, world);
         }
 

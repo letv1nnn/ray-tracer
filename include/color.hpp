@@ -16,12 +16,20 @@ constexpr color to_rgb8(color normalized_color) {
     return color(to_rgb8(normalized_color.x), to_rgb8(normalized_color.y), to_rgb8(normalized_color.z));  
 }
 
+constexpr f64 linear_to_gamma(f64 linear_component) {
+    return (linear_component > 0) ? std::sqrt(linear_component) : 0;
+}
+
 // write color to out
 const auto write_color = [](std::ostream& out, color rgb8_color) -> void {
+    const f64 r = linear_to_gamma(rgb8_color.x);    
+    const f64 g = linear_to_gamma(rgb8_color.y);    
+    const f64 b = linear_to_gamma(rgb8_color.z);    
+    
     static const interval intensity{0.0, 0.999}; 
-    i32 rbyte = static_cast<i32>(256 * intensity.clamp(rgb8_color.x));
-    i32 gbyte = static_cast<i32>(256 * intensity.clamp(rgb8_color.y));
-    i32 bbyte = static_cast<i32>(256 * intensity.clamp(rgb8_color.z));
+    i32 rbyte = static_cast<i32>(256 * intensity.clamp(r));
+    i32 gbyte = static_cast<i32>(256 * intensity.clamp(g));
+    i32 bbyte = static_cast<i32>(256 * intensity.clamp(b));
 
     out << rbyte << ' ' << gbyte << ' ' << bbyte << '\n';
 };
