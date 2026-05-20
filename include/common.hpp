@@ -10,7 +10,6 @@
 // common headers
 #include "types.hpp"
 #include "ray.hpp"
-#include "vec3.hpp"
 #include "color.hpp"
 
 namespace raytracer {

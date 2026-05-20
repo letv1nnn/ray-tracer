@@ -4,6 +4,7 @@
 #include <ostream>
 
 #include "types.hpp"
+#include "common.hpp"
 
 namespace raytracer {
 
@@ -37,6 +38,13 @@ public: // other methods
     constexpr f64 length_squared() const {
         return x * x + y * y + z * z;
     }
+public: // static methods
+    static vec3 random() {
+        return vec3{random_f64(), random_f64(), random_f64()};
+    }
+    static vec3 random(f64 min, f64 max) {
+        return vec3{random_f64(min, max), random_f64(min, max), random_f64(min, max)};
+    }
 };
 
 // vec3 utility functions
@@ -69,6 +77,23 @@ inline vec3 cross(const vec3& va, const vec3& vb) {
 }
 inline vec3 unit(const vec3& v) {
     return v / v.length();
+}
+inline vec3 random_unit_vector() {
+    while (1) {
+        const auto p = vec3::random(-1, 1);
+        const auto lensq = p.length_squared();
+        if (1e-160 < lensq && lensq <= 1) {
+            return p / sqrt(lensq);
+        }
+    }
+}
+// function that would compare the random vector and the surface normal
+// by checking whether the dot product is negative, then we need to invert the vector,
+// otherwise, keep it as it is.
+inline vec3 random_on_hemisphere(const vec3& normal) {
+    vec3 on_unit_sphere = random_unit_vector();
+    // in the same hemisphere as the normal
+    return (dot(on_unit_sphere, normal) > 0.0) ? on_unit_sphere : -on_unit_sphere;
 }
 
 }
