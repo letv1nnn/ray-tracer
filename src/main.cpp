@@ -12,7 +12,7 @@ int main([[maybe_unused]]int argc, [[maybe_unused]]char **argv) {
     world.add(std::make_shared<raytracer::sphere>(raytracer::vec3{0, -100.5, -1}, 100));
 
     // camera
-    raytracer::camera cam{16.0/9.0, 400, 100};
+    raytracer::camera cam{16.0/9.0, 400, 100, 50};
     cam.render(world);
 
     return 0;

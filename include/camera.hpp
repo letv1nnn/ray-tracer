@@ -11,19 +11,21 @@ private: // attributes
     i32 image_width;        // render image width
     i32 image_height;       // render image height
     i32 samples_per_pixel;  // number of samples per pixel for antialiasing
+    i32 max_depth;          // maximum number of ray boundces into scene
     f64 pixel_samples_scale;// color scale factor for a sum of pixel samples
     vec3 center;            // camera center
     vec3 pixel00_loc;       // location of pixel (0, 0)
     vec3 pixel_delta_u;     // offset to pixel to the right
     vec3 pixel_delta_v;     // offset to pixel below
 public: // constructors and destructors
-    constexpr camera(f64 aspect_ratio = 1.0, i32 image_width = 100, i32 samples_per_pixel = 10) 
-        : aspect_ratio{aspect_ratio}, image_width{image_width}, samples_per_pixel{samples_per_pixel} {}
+    constexpr camera(f64 aspect_ratio = 1.0, i32 image_width = 100, i32 samples_per_pixel = 10, i32 max_depth = 10) 
+        : aspect_ratio{aspect_ratio}, image_width{image_width}, samples_per_pixel{samples_per_pixel}, max_depth{max_depth} {}
 public: // getters and setters
     constexpr f64 get_aspect_ratio() const noexcept { return aspect_ratio; }
     constexpr i32 get_image_width() const noexcept { return image_width; }
     constexpr i32 get_image_height() const noexcept { return image_height; }
     constexpr i32 get_samples_per_pixel() const noexcept { return samples_per_pixel; }
+    constexpr i32 get_max_depth() const noexcept { return max_depth; }
     constexpr i32 get_pixel_samples_scale() const noexcept { return pixel_samples_scale; }
     constexpr const vec3& get_center() const noexcept { return center; }
     constexpr const vec3& get_pixel00_loc() const noexcept { return pixel00_loc; }
@@ -57,11 +59,16 @@ private: // private helper methods
         const vec3 viewport_upper_left = center - vec3{0.0, 0.0, focal_length} - viewport_u / 2 - viewport_v / 2;
         pixel00_loc = viewport_upper_left + 0.5 * (pixel_delta_u + pixel_delta_v);
     }
-    color ray_color(const ray& r, const hittable& world) const {
+    color ray_color(const ray& r, i32 depth, const hittable& world) const {
+        // if we've expected the ray bounce limit, no more light is gathered
+        if (depth <= 0) {
+            return color{};
+        }
+        
         hit_record rec;
-        if (world.hit(r, interval{0.0, infinity}, rec)) {
+        if (world.hit(r, interval{0.001, infinity}, rec)) {
             const vec3 direction = random_on_hemisphere(rec.normal);
-            return 0.5 * ray_color(ray{rec.p, direction}, world);
+            return 0.5 * ray_color(ray{rec.p, direction}, depth - 1, world);
         }
 
         const vec3 unit_direction = unit(r.get_direction());
@@ -94,7 +101,7 @@ public: // other methods
                 color pixel_color{};
                 for (i32 sample{}; sample < samples_per_pixel; ++sample) {
                     ray r = get_ray(x, y);
-                    pixel_color += ray_color(r, world);
+                    pixel_color += ray_color(r, max_depth, world);
                 }
                 
                 write_color(std::cout, pixel_samples_scale * pixel_color);
