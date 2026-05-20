@@ -4,7 +4,7 @@
 #include <ostream>
 
 #include "types.hpp"
-#include "common.hpp"
+#include "utils.hpp"
 
 namespace raytracer {
 
