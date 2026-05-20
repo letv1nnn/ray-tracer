@@ -56,31 +56,31 @@ public: // static methods
 inline std::ostream& operator<<(std::ostream& out, const vec3& v) {
     return out << v.x << ' ' << v.y << ' ' << v.z;
 }
-inline vec3 operator+(const vec3& va, const vec3& vb) {
+constexpr vec3 operator+(const vec3& va, const vec3& vb) {
     return vec3(va.x + vb.x, va.y + vb.y, va.z + vb.z);
 }
-inline vec3 operator-(const vec3& va, const vec3& vb) {
+constexpr vec3 operator-(const vec3& va, const vec3& vb) {
     return vec3(va.x - vb.x, va.y - vb.y, va.z - vb.z);
 }
-inline vec3 operator*(const vec3& va, const vec3& vb) { // not a dot product
+constexpr vec3 operator*(const vec3& va, const vec3& vb) { // not a dot product
     return vec3(va.x * vb.x, va.y * vb.y, va.z * vb.z);
 }
-inline vec3 operator*(f64 scalar, const vec3& v) {
+constexpr vec3 operator*(f64 scalar, const vec3& v) {
     return vec3(v.x * scalar, v.y * scalar, v.z * scalar);
 }
-inline vec3 operator*(const vec3& v, f64 scalar) {
+constexpr vec3 operator*(const vec3& v, f64 scalar) {
     return scalar * v;
 }
-inline vec3 operator/(const vec3& v, double scalar) {
+constexpr vec3 operator/(const vec3& v, double scalar) {
     return (scalar != 0) ? (1/scalar) * v : vec3{};
 }
-inline f64 dot(const vec3& va, const vec3& vb) {
+constexpr f64 dot(const vec3& va, const vec3& vb) {
     return va.x * vb.x + va.y * vb.y + va.z * vb.z;
 }
-inline vec3 cross(const vec3& va, const vec3& vb) {
+constexpr vec3 cross(const vec3& va, const vec3& vb) {
     return vec3(va.y * vb.z - va.z * vb.y, va.z * vb.x - va.x * vb.z, va.x * vb.y - va.y * vb.x);
 }
-inline vec3 unit(const vec3& v) {
+constexpr vec3 unit(const vec3& v) {
     return v / v.length();
 }
 inline vec3 random_unit_vector() {
@@ -99,6 +99,9 @@ inline vec3 random_on_hemisphere(const vec3& normal) {
     vec3 on_unit_sphere = random_unit_vector();
     // in the same hemisphere as the normal
     return (dot(on_unit_sphere, normal) > 0.0) ? on_unit_sphere : -on_unit_sphere;
+}
+constexpr vec3 reflect(const vec3& v, const vec3& n) {
+    return v - 2 * dot(v, n) * n;
 }
 
 }

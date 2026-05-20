@@ -1,6 +1,7 @@
 #pragma once
 
 #include "hittable.hpp"
+#include "material.hpp"
 #include "vec3.hpp"
 
 namespace raytracer {
@@ -67,8 +68,12 @@ private: // private helper methods
         
         hit_record rec;
         if (world.hit(r, interval{0.001, infinity}, rec)) {
-            const vec3 direction = rec.normal + random_unit_vector();
-            return 0.5 * ray_color(ray{rec.p, direction}, depth - 1, world);
+            ray scattered;
+            color attenuation;
+            if (rec.mat->scatter(r, rec, attenuation, scattered)) {
+                return attenuation * ray_color(scattered, depth - 1, world);
+            }
+            return color{};
         }
 
         const vec3 unit_direction = unit(r.get_direction());

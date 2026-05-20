@@ -78,3 +78,10 @@ After using gamma correction for accurate color intensity, I got the following r
 
 ![gamma-corrected sphere](./assets/gamma_corrected_diffuse_sphere.jpg)
 
+### metal
+
+The reflection direction for the metal material is computed by taking the incoming vector, removing its component along the surface normal (via the dot product), and flipping it outward, resulting in a mirror-like bounce, the result is on the first image below. Then, I've added a fuzzy reflection, the resulting rendered image is the second below.
+
+![metal material](./assets/shiny_metal.jpg) ![fuzzy metal](./assets/fuzzed_metal.jpg)
+
+

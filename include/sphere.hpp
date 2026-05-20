@@ -11,9 +11,8 @@ private: // attributes
     f64 radius;
     std::shared_ptr<material> mat;
 public: // constructor
-    constexpr sphere(const vec3& center, f64 radius) : center{center}, radius{std::fmax(0.0, radius)} {
-        // TODO: Initialize the material pointer `mat`.
-    }
+    sphere(const vec3& center, f64 radius, std::shared_ptr<material> mat)
+        : center{center}, radius{std::fmax(0.0, radius)}, mat{mat} {}
 public: // other methods
     bool hit(const ray &r, interval ray_t, hit_record &rec) const override {
         const raytracer::vec3 oc = center - r.get_origin();
