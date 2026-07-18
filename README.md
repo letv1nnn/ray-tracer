@@ -5,14 +5,21 @@ A small ray tracer implemented in C++. I've used the following [article](https:/
 
 ## build & run
 
+***CMake***
 ```sh
 cmake -S . -B build
 cmake --build build
 ./build/ray-tracer > output.ppm
 ```
 
+***Zig***
 ```sh
-rm -rf build/ # remove generated directory
+zig build
+./zig-out/bin/ray-tracer > output.ppm
+```
+
+```sh
+rm -rf build/ zig-out output.ppm # remove generated directories
 ```
 
 ## examples and explanation

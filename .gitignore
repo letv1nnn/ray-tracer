@@ -1,4 +1,5 @@
 # Build
+zig-out/
 build/
 cmake-build-*/
 compile_commands.json
@@ -11,6 +12,7 @@ compile_commands.json
 
 # Cache / editor
 .cache/
+.zig-cache/
 .vscode/
 *.swp
 *~
